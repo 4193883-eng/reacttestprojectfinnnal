@@ -1,16 +1,16 @@
 import {
-  Stack,
-  Button,
-  FormControl,
-  FormLabel,
-  FormErrorMessage,
-  Input,
-  Wrap,
-  Alert,
-  AlertIcon,
-  ButtonGroup,
+    Stack,
+    Button,
+    FormControl,
+    FormLabel,
+    FormErrorMessage,
+    Input,
+    Wrap,
+    Alert,
+    AlertIcon,
+    ButtonGroup, useToast,
 } from '@chakra-ui/react';
-import { Link } from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { useDispatch } from 'react-redux';
@@ -32,7 +32,8 @@ const validationSchema = yup.object().shape({
 
 function RegisterForm() {
   const dispatch = useDispatch();
-
+  const toast = useToast();
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -50,7 +51,12 @@ function RegisterForm() {
 
       registerService(values)
           .then((data) => {
-            dispatch(loginAction(data));
+              dispatch(loginAction(data));
+              navigate('/feed');
+              toast({
+                  title: 'Register successful!',
+                  status: 'success',
+              });
           })
           .catch((err) => setError(err.response.data.message))
           .finally(() => setIsLoading(false));
@@ -71,6 +77,7 @@ function RegisterForm() {
             label={'Password'}
             placeholder={'Password'}
             required={true}
+            type={'password'}
             {...formik.getFieldProps('password')}
         />
         <ButtonGroup>
@@ -86,7 +93,7 @@ function RegisterForm() {
               label={'Last Name'}
               placeholder={'Last Name'}
               required={true}
-              {...formik.getFieldProps('lasstName')}
+              {...formik.getFieldProps('lastName')}
           />
         </ButtonGroup>
         {error && (
